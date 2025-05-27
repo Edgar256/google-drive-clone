@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String    @unique
+  password      String
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  files         File[]
+  folders       Folder[]
+  sharedFiles   SharedFile[] @relation("SharedWith")
+  sharedByFiles SharedFile[] @relation("SharedBy")
+}
+
+model File {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  url         String
+  type        String
+  size        Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String    @db.ObjectId
+  user        User      @relation(fields: [userId], references: [id])
+  isStarred   Boolean   @default(false)
+  isDeleted   Boolean   @default(false)
+  deletedAt   DateTime?
+  sharedWith  SharedFile[]
+  folderId    String?   @db.ObjectId
+  folder      Folder?   @relation(fields: [folderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Folder {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String    @db.ObjectId
+  user        User      @relation(fields: [userId], references: [id])
+  parentId    String?   @db.ObjectId
+  parent      Folder?   @relation("FolderToFolder", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children    Folder[]  @relation("FolderToFolder")
+  files       File[]
+}
+
+model SharedFile {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  fileId        String   @db.ObjectId
+  file          File     @relation(fields: [fileId], references: [id])
+  sharedWithId  String   @db.ObjectId
+  sharedWith    User     @relation("SharedWith", fields: [sharedWithId], references: [id])
+  sharedById    String   @db.ObjectId
+  sharedBy      User     @relation("SharedBy", fields: [sharedById], references: [id])
+  createdAt     DateTime @default(now())
+} 
