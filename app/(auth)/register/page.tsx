@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
+import Image from "next/image";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -53,6 +54,18 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-[#f1f3f4]">
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-sm">
         <div>
+          <div className="flex justify-center">
+            <Link href="/">
+              <Image
+                src="/drive-logo.svg"
+                alt="Google Drive Logo"
+                width={120}
+                height={120}
+                className="mb-8 hover:opacity-80 transition-opacity"
+                priority
+              />
+            </Link>
+          </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-[#202124]">
             Create your account
           </h2>
