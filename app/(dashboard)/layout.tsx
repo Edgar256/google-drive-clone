@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
-import { FiFolder, FiFile, FiStar, FiShare2, FiTrash2, FiSettings, FiMenu, FiUsers, FiChevronRight, FiChevronDown } from "react-icons/fi";
+import { FiFolder, FiFile, FiStar, FiShare2, FiTrash2, FiSettings, FiMenu, FiUsers, FiChevronRight, FiChevronDown, FiLogOut } from "react-icons/fi";
 
 interface Folder {
   id: string;
@@ -176,7 +176,7 @@ export default function DashboardLayout({
               onClick={() => signOut()}
               className="p-2 hover:bg-[#f1f3f4] rounded-full"
             >
-              <FiSettings className="h-5 w-5 text-[#5f6368]" />
+              <FiLogOut className="h-5 w-5 text-[#5f6368]" />
             </button>
           </div>
         </div>
