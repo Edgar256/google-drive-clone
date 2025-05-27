@@ -1,52 +1,52 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { authOptions } from "../../../lib/auth";
+import { PrismaClient } from "@prisma/client";
+
+export const dynamic = 'force-dynamic';
+
+const prisma = new PrismaClient();
+
+interface SharedFile {
+  id: string;
+  fileId: string;
+  sharedWithId: string;
+  file: {
+    id: string;
+    name: string;
+    url: string;
+    type: string;
+    size: number;
+    createdAt: string;
+  };
+}
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.email) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    });
-
-    if (!user) {
-      return new NextResponse("User not found", { status: 404 });
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
     }
 
     const sharedFiles = await prisma.sharedFile.findMany({
       where: {
-        sharedWithId: user.id,
+        sharedWithId: session.user.id,
       },
       include: {
         file: true,
-        sharedBy: {
-          select: {
-            name: true,
-            email: true,
-          },
-        },
       },
     });
 
-    const formattedFiles = sharedFiles.map((sharedFile) => ({
-      id: sharedFile.file.id,
-      name: sharedFile.file.name,
-      url: sharedFile.file.url,
-      type: sharedFile.file.type,
-      size: sharedFile.file.size,
-      createdAt: sharedFile.file.createdAt,
-      sharedBy: sharedFile.sharedBy,
-    }));
-
-    return NextResponse.json(formattedFiles);
+    return NextResponse.json(sharedFiles);
   } catch (error) {
     console.error("[SHARED_FILES_GET]", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 } 
