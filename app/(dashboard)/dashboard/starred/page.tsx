@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "react-hot-toast";
-import { FiFile, FiStar, FiStarOff } from "react-icons/fi";
+import { FiFile, FiStar, FiStar as FiStarOff } from "react-icons/fi";
 
 interface StarredFile {
   id: string;
