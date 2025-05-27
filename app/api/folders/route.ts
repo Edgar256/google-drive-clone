@@ -4,6 +4,8 @@ import { authOptions } from "../../lib/auth";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 
+export const dynamic = 'force-dynamic';
+
 const prisma = new PrismaClient();
 
 const folderSchema = z.object({
